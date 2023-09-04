@@ -1,0 +1,81 @@
+#include <Stepper.h>
+int spr = 64;
+Stepper moto(spr, 2, 4, 3, 5);
+const int trigPin = 7;   
+const int echoPin = 6;  
+const int trigPin1 = 10;   
+const int echoPin1 = 9;  
+const int trigPin2 = 11;   
+const int echoPin2 = 12;  
+void setup() {
+  Serial.begin(9600);
+  moto.setSpeed(500);
+  pinMode(8, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(trigPin1, OUTPUT);
+  pinMode(echoPin1, INPUT);
+  pinMode(trigPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
+}
+
+void loop() {
+  long duration, distance_cm;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance_cm = duration / 58;
+  Serial.print("Distance: ");
+  Serial.print(distance_cm);
+  Serial.println(" cm");
+  digitalWrite(8, 1);
+
+
+
+  delay(1000);  
+  digitalWrite(8, LOW);
+  if (distance_cm < 10){
+    long duration1, distance_cm1;
+    long duration2, distance_cm2;
+    digitalWrite(trigPin1, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin1, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin1, LOW);
+    duration1 = pulseIn(echoPin1, HIGH);
+    distance_cm1 = duration1 / 58;
+    digitalWrite(trigPin2, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin2, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin2, LOW);
+    duration2 = pulseIn(echoPin2, HIGH);
+    distance_cm2 = duration2 / 58;
+    if ( distance_cm2 < distance_cm1){
+      moto.step(11.5*spr);
+      delay(200);
+      digitalWrite(8, 0);
+      delay(200);
+      digitalWrite(8, 0);
+      moto.step(-11.5*spr);
+    }
+
+     else if(distance_cm2 > distance_cm1){
+      moto.step(-11.5*spr);
+      delay(200);
+      digitalWrite(8, 0);
+      delay(200);
+      digitalWrite(8, 0);
+      moto.step(11.5*spr);
+      
+      
+      }
+ 
+ 
+  }
+
+
+}
